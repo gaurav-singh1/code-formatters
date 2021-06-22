@@ -40,3 +40,15 @@ def date_converter(_col, cfg):
 
     converted_date = _col.apply(lambda x: date_handler(x))
     return pd.Series(converted_date)
+
+
+def remove_special_chars(_col, cfg):
+    special_characters_to_remove = cfg["special_characters_to_remove"]
+    # getting the error,updated regx=True FutureWarning: The default
+    # value of regex will change from True to False in a future version
+    res = _col.apply(str).str.replace(
+        r"[{}]".format(special_characters_to_remove), "", regex=True
+    )
+    res = res.replace(to_replace=r"(?i)^null$|^[\s]+$", value="", regex=True)
+    res[res == ""] = None
+    return res
